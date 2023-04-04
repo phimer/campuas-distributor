@@ -2,8 +2,8 @@ import sqlite3
 from csv import writer, reader
 
 
-connection = sqlite3.connect("data.db")
-c = connection.cursor()
+con = sqlite3.connect("data.db")
+c = con.cursor()
 
 
 def get_first_entry(table):
@@ -14,11 +14,11 @@ def get_first_entry(table):
     return login_password
 
 
-def delete_first_item_from_table(table, id):
+def delete(table, id):
 
     c.execute(f"""DELETE from {table} WHERE id=?""", [id])
 
-    connection.commit()
+    con.commit()
 
 
 def insert(
@@ -41,14 +41,53 @@ def insert(
         ),
     )
 
-    connection.commit()
+    con.commit()
 
 
-# print(read_one_db())
+def insert_csv(csv_file_path, table_name):
 
-# delete_first_item_from_db(read_one_db()[0])
+    con.execute(
+        f"create table if not exists {table_name} (id integer primary key autoincrement, kennung varchar(60) NOT NULL, passwort varchar(60) NOT NULL)"
+    )
 
-# print(read_one_db()[0])
+    csv_list = []
+
+    with open(csv_file_path, "r") as file:
+        csv_reader = reader(file, delimiter=";")
+        for row in csv_reader:
+            kennung = row[0]
+            password = row[3]
+            csv_list.append((kennung, password))
+
+    con.executemany(
+        f"INSERT INTO {table_name}(kennung, passwort) values (?,?)", csv_list
+    )
+    con.commit()
 
 
-# con.commit()
+def get_count_of_rows(table):
+
+    query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table}';"
+    result = con.execute(query)
+    if result.fetchone() is None:
+        return 0
+    else:
+        return c.execute(f"SELECT count(*) FROM {table}").fetchall()[0][0]
+
+
+# c.execute(f"""SELECT ID from OriginalKennungen LIMIT 1;""")
+# print(c.fetchone())
+
+
+# result = con.execute(query)
+# x = result.fetchone()
+# print(x)
+original_kennungen_table_name = "OriginalKennungen"
+verteilte_kennungen_table_name = "VerteilteKennungen"
+result = get_first_entry(original_kennungen_table_name)
+
+print(result[0])
+
+delete(original_kennungen_table_name, result[0])
+
+con.commit()
