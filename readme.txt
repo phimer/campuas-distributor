@@ -1,4 +1,5 @@
 conda create -n moodle python=3.10
+conda activate moodle
 
 pip install -r requirements.txt
 
