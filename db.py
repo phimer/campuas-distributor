@@ -75,19 +75,15 @@ def get_count_of_rows(table):
         return c.execute(f"SELECT count(*) FROM {table}").fetchall()[0][0]
 
 
-# c.execute(f"""SELECT ID from OriginalKennungen LIMIT 1;""")
-# print(c.fetchone())
-
-
 # result = con.execute(query)
 # x = result.fetchone()
 # print(x)
-original_kennungen_table_name = "OriginalKennungen"
-verteilte_kennungen_table_name = "VerteilteKennungen"
-result = get_first_entry(original_kennungen_table_name)
+# original_kennungen_table_name = "OriginalKennungen"
+# verteilte_kennungen_table_name = "VerteilteKennungen"
+# result = get_first_entry(original_kennungen_table_name)
 
-print(result[0])
+# print(result[0])
 
-delete(original_kennungen_table_name, result[0])
+# delete(original_kennungen_table_name, result[0])
 
-con.commit()
+# con.commit()
