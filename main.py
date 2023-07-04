@@ -16,11 +16,11 @@ except:
     print("Table OriginalKennungen exists")
 
 
-user_input = input("do you want to import a csv file into the database? (y/n)\n")
+user_input = input("Do you want to import a csv file into the database? (y/n)\n")
 
 if user_input == "y":
 
-    file_path = "OOP_WS20-21_Accounts.csv"
+    file_path = input("Enter filepath for csv:\n")
 
     check, count = bot.check_if_data_already_in_table()
 
@@ -33,7 +33,11 @@ if user_input == "y":
         )
 
         if user_input == "y":
-            bot.save_csv_in_database(file_path)
+            try:
+                bot.save_csv_in_database(file_path)
+            except:
+                print("Error while importing csv file - start program again.")
+                exit()
     else:
         bot.save_csv_in_database(file_path)
 
