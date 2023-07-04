@@ -23,7 +23,7 @@ def delete(table, id):
 
 def insert(
     table,
-    moodle_id,
+    moodle_kennung,
     moodle_pw,
     moodle_student_name,
     moodle_student_emal,
@@ -31,9 +31,9 @@ def insert(
 ):
 
     c.execute(
-        f"INSERT INTO {table} (id, password, student_name, student_email, matrikel_nummer) VALUES(?,?,?,?,?)",
+        f"INSERT INTO {table} (kennung, password, name, email, matrikelnr) VALUES(?,?,?,?,?)",
         (
-            moodle_id,
+            moodle_kennung,
             moodle_pw,
             moodle_student_name,
             moodle_student_emal,
@@ -47,7 +47,7 @@ def insert(
 def insert_csv(csv_file_path, table_name):
 
     con.execute(
-        f"create table if not exists {table_name} (id integer primary key autoincrement, kennung varchar(60) NOT NULL, passwort varchar(60) NOT NULL)"
+        f"create table if not exists {table_name} (id integer primary key autoincrement, kennung varchar(60) NOT NULL, password varchar(60) NOT NULL)"
     )
 
     csv_list = []
@@ -60,7 +60,7 @@ def insert_csv(csv_file_path, table_name):
             csv_list.append((kennung, password))
 
     con.executemany(
-        f"INSERT INTO {table_name}(kennung, passwort) values (?,?)", csv_list
+        f"INSERT INTO {table_name}(kennung, password) values (?,?)", csv_list
     )
     con.commit()
 
@@ -73,6 +73,36 @@ def get_count_of_rows(table):
         return 0
     else:
         return c.execute(f"SELECT count(*) FROM {table}").fetchall()[0][0]
+
+
+def create_table_verteilte_kennungen():
+    create_table_query = """
+        CREATE TABLE VerteilteKennungen (
+            KENNUNG TEXT PRIMARY KEY,
+            PASSWORD TEXT NOT NULL,
+            NAME TEXT NOT NULL,
+            EMAIL TEXT NOT NULL,
+            MATRIKELNR TEXT
+        );
+    """
+
+    con.execute(create_table_query)
+    con.commit()
+    print("Created table VerteilteKennungen")
+
+
+def create_table_original_kennungen():
+    create_table_query = """
+        CREATE TABLE OriginalKennungen (
+            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            KENNUNG TEXT NOT NULL,
+            PASSWORD TEXT NOT NULL
+        );
+    """
+
+    con.execute(create_table_query)
+    con.commit()
+    print("Created table VerteilteKennungen")
 
 
 # result = con.execute(query)

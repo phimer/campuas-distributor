@@ -7,4 +7,5 @@ OOP_WS20-21_Accounts.csv
 __pycache__
 debug.log
 geckodriver.log
-
+gui.py
+gui2.py

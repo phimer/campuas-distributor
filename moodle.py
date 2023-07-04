@@ -9,10 +9,10 @@ from pynput.mouse import Button, Controller
 import db
 
 
-original_kennungen_table_name = "OriginalKennungen"
-verteilte_kennungen_table_name = "VerteilteKennungen"
-login_seite = "https://moodle.frankfurt-university.de/login/index.php"
-kurs_link = "https://moodle.frankfurt-university.de/mod/assign/view.php?id=325540&action=grader%2F&userid=7793"
+# original_kennungen_table_name = "OriginalKennungen"
+# verteilte_kennungen_table_name = "VerteilteKennungen"
+# login_seite = "https://moodle.frankfurt-university.de/login/index.php"
+# kurs_link = "https://campuas.frankfurt-university.de/course/view.php?id=4239"
 
 
 class MoodleBot:
@@ -58,13 +58,14 @@ class MoodleBot:
 
         # auf login navigieren
         self.driver.get(self.login_seite)
-        sleep(1)
+
+        sleep(2)
 
         self.driver.find_element(
             by="xpath",
             value="/html/body/div[2]/div[3]/section/aside/section[2]/div/div/div/div[2]/div/div/a",
         ).click()
-        sleep(1)
+        sleep(2)
 
         login = self.driver.find_element(by="id", value="username")
         login.send_keys(self.login)
@@ -76,12 +77,33 @@ class MoodleBot:
         self.driver.find_element(by="name", value="_eventId_proceed").click()
         print("clicked login button")
 
+        sleep(2)
+
         # navigate to course
-        self.driver.get(self.kurs_link)
+        # self.driver.get(self.kurs_link)
+        # print("navigated to course")
 
-        sleep(5)
+        # sleep(2)
 
-        print(colored("sleep 10", "green"))
+        # navigate to abgabe
+        # self.driver.find_element(
+        #     by="xpath",
+        #     value="/html/body/div[3]/div[4]/div[2]/div[3]/div/section/div/div/div/ul/li[1]/div[2]/ul/li[2]/div/div[1]/div/div[1]/div/div[2]/div[2]/a",
+        # ).click()
+        # print("navigated to abgabe")
+
+        # navigate directly to abgabe
+        self.driver.get(
+            "https://campuas.frankfurt-university.de/mod/assign/view.php?id=215998"
+        )
+
+        # click Grade
+        self.driver.find_element(
+            by="xpath",
+            value="/html/body/div[2]/div[4]/div[2]/div[3]/div/section/div[2]/div[1]/div/div[2]/a",
+        ).click()
+
+        print("sleep 10 before verteilung")
         sleep(10)
 
         ########### verteilung beginnt ################
@@ -96,7 +118,7 @@ class MoodleBot:
             print(f"\n{i+1}")
 
             # get student info
-            raw_student_info = self.driver.find_element_by_tag_name("h4").text
+            raw_student_info = self.driver.find_element(by="tag name", value="h4").text
 
             student_info_split = raw_student_info.splitlines()
 
@@ -104,11 +126,14 @@ class MoodleBot:
 
             student_email = student_info_split[1]
 
+            print(student_name)
+            print(student_email)
+
             # check ob student schon kennung hat - checkt nur ob das feld leer ist oder nicht, nicht was er bekommen hat
-            # else case gibt student kennung
+            # else case verteilt Kennung an student
             antwort_feld_text = self.driver.find_element(
-                by="xpath",
-                value="/html/body/div[5]/div/div/div[3]/div/div[2]/form/fieldset[1]/div/div[3]/div[2]/div[1]/div[1]/div/div[2]/div",
+                by="id",
+                value="id_assignfeedbackcomments_editoreditable",
             ).text
 
             if antwort_feld_text != "":
@@ -123,9 +148,10 @@ class MoodleBot:
 
                 # student abgabe - hoffentlich matrikelnummer
                 try:
-                    student_abgabe = self.driver.find_element_by_class_name(
-                        "no-overflow"
+                    student_abgabe = self.driver.find_element(
+                        by="class name", value="no-overflow"
                     ).text
+                    print(f"Student Abgabe: {student_abgabe}")
 
                     if str(student_abgabe).isdigit() and len(str(student_abgabe)) == 7:
 
@@ -161,8 +187,7 @@ class MoodleBot:
                     # in editor feld clicken
                     print(colored("in feld clicken", "blue"))
                     self.driver.find_element(
-                        by="xpath",
-                        value='//*[@id="id_assignfeedbackcomments_editoreditable"]',
+                        by="class name", value="editor_atto_content"
                     ).click()
 
                     # login und pw aus database holen
@@ -183,9 +208,7 @@ class MoodleBot:
                     print(colored("neue Daten in Datenbank geschrieben", "green"))
 
                     # login und pw aus db löschen
-                    db.delete_first_item_from_table(
-                        table=self.original_kennungen_table_name, id=result_id
-                    )
+                    db.delete(table=self.original_kennungen_table_name, id=result_id)
                     print(colored("login und pw aus table gelöscht", "green"))
 
                     # text in feld eingeben

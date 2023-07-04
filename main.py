@@ -3,9 +3,20 @@ from moodle import MoodleBot
 
 bot = MoodleBot()
 
+try:
+    db.create_table_verteilte_kennungen()
+    print("Created Table VerteilteKennungen")
+except:
+    print("Table VerteilteKennungen exists")
+
+try:
+    db.create_table_original_kennungen()
+    print("Created Table OriginalKennungen")
+except:
+    print("Table OriginalKennungen exists")
+
 
 user_input = input("do you want to import a csv file into the database? (y/n)\n")
-
 
 if user_input == "y":
 
