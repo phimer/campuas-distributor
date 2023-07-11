@@ -56,7 +56,7 @@ def insert_csv(csv_file_path, table_name):
         csv_reader = reader(file, delimiter=";")
         for row in csv_reader:
             kennung = row[0]
-            password = row[3]
+            password = row[1]
             csv_list.append((kennung, password))
 
     con.executemany(

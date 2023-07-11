@@ -17,7 +17,6 @@ import db
 
 class MoodleBot:
     def __init__(self):
-
         # self.driver = webdriver.Chrome(ChromeDriverManager().install())
 
         # set kurs link here
@@ -29,14 +28,12 @@ class MoodleBot:
         self.password = login_info.password
 
     def db_result_to_string(self, login_password):
-
         login = login_password[0]
         password = login_password[1]
 
         return f"Login: {login} Password: {password}"
 
     def check_if_data_already_in_table(self):
-
         count = int(db.get_count_of_rows(table=self.original_kennungen_table_name))
 
         if count > 0:
@@ -52,7 +49,6 @@ class MoodleBot:
         print("CSV imported.")
 
     def start(self):
-
         self.driver = webdriver.Firefox()
         self.mouse = Controller()
 
@@ -110,7 +106,6 @@ class MoodleBot:
         abgabe_check = False  # checkt ob Student eigene Abgabe gemacht hat
         i = 0
         for i in range(100):
-
             print("sleep 20")
             # check jedes mal auf false setzen - wird benutzt um zu sehen ob student (RICHTIGE) abgabe gemacht hat - nur wenn wird weiter gemacht, sonst student übersprungen
             abgabe_check = False
@@ -154,7 +149,6 @@ class MoodleBot:
                     print(f"Student Abgabe: {student_abgabe}")
 
                     if str(student_abgabe).isdigit() and len(str(student_abgabe)) == 7:
-
                         print(
                             colored(
                                 f"Matrikelnummer angegeben\n{student_abgabe}", "yellow"
@@ -165,7 +159,6 @@ class MoodleBot:
                     elif (
                         str(student_abgabe).isdigit() and len(str(student_abgabe)) == 6
                     ):
-
                         print(
                             colored(
                                 f"Matrikelnummer angegeben\n{student_abgabe}", "yellow"
@@ -185,7 +178,6 @@ class MoodleBot:
                 # if - nur wenn student abgabe gemacht hat, bekommt er auch VM
                 if abgabe_check:
                     # in editor feld clicken
-                    print(colored("in feld clicken", "blue"))
                     self.driver.find_element(
                         by="class name", value="editor_atto_content"
                     ).click()
