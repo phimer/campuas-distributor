@@ -106,7 +106,6 @@ class MoodleBot:
         abgabe_check = False  # checkt ob Student eigene Abgabe gemacht hat
         i = 0
         for i in range(100):
-            print("sleep 20")
             # check jedes mal auf false setzen - wird benutzt um zu sehen ob student (RICHTIGE) abgabe gemacht hat - nur wenn wird weiter gemacht, sonst student übersprungen
             abgabe_check = False
 
@@ -137,6 +136,14 @@ class MoodleBot:
                         f"Student {student_name} hat schon Kennung bekommen", "magenta"
                     )
                 )
+                # uncheck notify student
+                notify_student_checkbox = self.driver.find_element(
+                    by="xpath",
+                    value="/html/body/div[5]/section/div/div[4]/div/div[2]/form/label/input",
+                )
+                if notify_student_checkbox.is_selected():
+                    print("Unselect Notify Student")
+                    notify_student_checkbox.click()
 
             else:
                 print(colored(f"{student_name} - {student_email}", "white"))
@@ -217,6 +224,20 @@ class MoodleBot:
                             "on_red",
                         )
                     )
+                # wenn student abgabe gemacht hat -> check notify student, else unchecked notify student
+                notify_student_checkbox = self.driver.find_element(
+                    by="xpath",
+                    value="/html/body/div[5]/section/div/div[4]/div/div[2]/form/label/input",
+                )
+                if abgabe_check:
+                    if not notify_student_checkbox.is_selected():
+                        print("Select Notify Student")
+                        notify_student_checkbox.click()
+                else:
+                    if notify_student_checkbox.is_selected():
+                        print("Unselect Notify Student")
+                        notify_student_checkbox.click()
+
             sleep(1)
 
             # die nächsten 2 Schritte müssen bei jeder loop ausgeführt werden, da sie zum nächsten studenten springen
@@ -224,15 +245,15 @@ class MoodleBot:
             print(colored("click save and show next", "white"))
             nextbutton = self.driver.find_element(by="name", value="saveandshownext")
             nextbutton.click()
-            # click ok button
-            print(colored("3 sec sleep - click ok", "white"))
-            sleep(3)
-            self.mouse.position = (434, 434)
-            self.mouse.click(Button.left, 1)
+            # # click ok button
+            # print(colored("3 sec sleep - click ok", "white"))
+            # sleep(3)
+            # self.mouse.position = (434, 434)
+            # self.mouse.click(Button.left, 1)
 
-            sleepy = 10
-            print(colored(f"{sleepy} sec sleep", "white"))
-            sleep(sleepy)  # maybe higher?
+            sleep_time = 5
+            print(colored(f"{sleep_time} sec sleep", "white"))
+            sleep(sleep_time)
 
             i = i + 1
         print(colored("ENDE", "red"))
