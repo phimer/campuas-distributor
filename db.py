@@ -7,7 +7,6 @@ c = con.cursor()
 
 
 def get_first_entry(table):
-
     c.execute(f"""SELECT * from {table} LIMIT 1;""")
     login_password = c.fetchone()
 
@@ -15,7 +14,6 @@ def get_first_entry(table):
 
 
 def delete(table, id):
-
     c.execute(f"""DELETE from {table} WHERE id=?""", [id])
 
     con.commit()
@@ -26,17 +24,16 @@ def insert(
     moodle_kennung,
     moodle_pw,
     moodle_student_name,
-    moodle_student_emal,
+    moodle_student_email,
     moodle_matrikel_nummer,
 ):
-
     c.execute(
         f"INSERT INTO {table} (kennung, password, name, email, matrikelnr) VALUES(?,?,?,?,?)",
         (
             moodle_kennung,
             moodle_pw,
             moodle_student_name,
-            moodle_student_emal,
+            moodle_student_email,
             moodle_matrikel_nummer,
         ),
     )
@@ -45,7 +42,6 @@ def insert(
 
 
 def insert_csv(csv_file_path, table_name):
-
     con.execute(
         f"create table if not exists {table_name} (id integer primary key autoincrement, kennung varchar(60) NOT NULL, password varchar(60) NOT NULL)"
     )
@@ -66,7 +62,6 @@ def insert_csv(csv_file_path, table_name):
 
 
 def get_count_of_rows(table):
-
     query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table}';"
     result = con.execute(query)
     if result.fetchone() is None:

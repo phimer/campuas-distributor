@@ -137,13 +137,7 @@ class MoodleBot:
                     )
                 )
                 # uncheck notify student
-                notify_student_checkbox = self.driver.find_element(
-                    by="xpath",
-                    value="/html/body/div[5]/section/div/div[4]/div/div[2]/form/label/input",
-                )
-                if notify_student_checkbox.is_selected():
-                    print("Unselect Notify Student")
-                    notify_student_checkbox.click()
+                self.set_notify_student_box(False)
 
             else:
                 print(colored(f"{student_name} - {student_email}", "white"))
@@ -155,16 +149,8 @@ class MoodleBot:
                     ).text
                     print(f"Student Abgabe: {student_abgabe}")
 
-                    if str(student_abgabe).isdigit() and len(str(student_abgabe)) == 7:
-                        print(
-                            colored(
-                                f"Matrikelnummer angegeben\n{student_abgabe}", "yellow"
-                            )
-                        )
-                        abgabe_check = True
-
-                    elif (
-                        str(student_abgabe).isdigit() and len(str(student_abgabe)) == 6
+                    if str(student_abgabe).isdigit() and (
+                        len(str(student_abgabe)) == 7 or len(str(student_abgabe)) == 6
                     ):
                         print(
                             colored(
@@ -182,6 +168,7 @@ class MoodleBot:
 
                 except:
                     print(colored("Student ohne Abgabe", "red"))
+
                 # if - nur wenn student abgabe gemacht hat, bekommt er auch VM
                 if abgabe_check:
                     # in editor feld clicken
@@ -197,12 +184,12 @@ class MoodleBot:
 
                     # kennung und student info in neue table schreiben
                     db.insert(
-                        self.verteilte_kennungen_table_name,
-                        result_kennung,
-                        result_password,
-                        student_name,
-                        student_email,
-                        student_abgabe,
+                        table=self.verteilte_kennungen_table_name,
+                        moodle_kennung=result_kennung,
+                        moodle_pw=result_password,
+                        moodle_student_name=student_name,
+                        moodle_student_email=student_email,
+                        moodle_matrikel_nummer=student_abgabe,
                     )
                     print(colored("neue Daten in Datenbank geschrieben", "green"))
 
@@ -225,22 +212,14 @@ class MoodleBot:
                         )
                     )
                 # wenn student abgabe gemacht hat -> check notify student, else unchecked notify student
-                notify_student_checkbox = self.driver.find_element(
-                    by="xpath",
-                    value="/html/body/div[5]/section/div/div[4]/div/div[2]/form/label/input",
-                )
                 if abgabe_check:
-                    if not notify_student_checkbox.is_selected():
-                        print("Select Notify Student")
-                        notify_student_checkbox.click()
+                    self.set_notify_student_box(True)
                 else:
-                    if notify_student_checkbox.is_selected():
-                        print("Unselect Notify Student")
-                        notify_student_checkbox.click()
+                    self.set_notify_student_box(False)
 
             sleep(1)
 
-            # die nächsten 2 Schritte müssen bei jeder loop ausgeführt werden, da sie zum nächsten studenten springen
+            # der nächste  Schritt muss bei jeder loop ausgeführt werden, da er zum nächsten studenten springt
             # click save and next
             print(colored("click save and show next", "white"))
             nextbutton = self.driver.find_element(by="name", value="saveandshownext")
@@ -256,4 +235,19 @@ class MoodleBot:
             sleep(sleep_time)
 
             i = i + 1
+
         print(colored("ENDE", "red"))
+
+    def set_notify_student_box(self, check_box: bool):
+        notify_student_checkbox = self.driver.find_element(
+            by="xpath",
+            value="/html/body/div[5]/section/div/div[4]/div/div[2]/form/label/input",
+        )
+        if check_box:
+            if not notify_student_checkbox.is_selected():
+                print("Select Notify Student")
+                notify_student_checkbox.click()
+        else:
+            if notify_student_checkbox.is_selected():
+                print("Unselect Notify Student")
+                notify_student_checkbox.click()
