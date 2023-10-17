@@ -1,4 +1,4 @@
 original_kennungen_table_name = "OriginalKennungen"
 verteilte_kennungen_table_name = "VerteilteKennungen"
 login_seite = "https://campuas.frankfurt-university.de/"
-kurs_link = "https://campuas.frankfurt-university.de/course/view.php?id=4239"
+anmelde_bereich_link = "https://campuas.frankfurt-university.de/mod/assign/view.php?id=233516"

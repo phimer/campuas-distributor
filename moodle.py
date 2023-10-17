@@ -9,18 +9,11 @@ from pynput.mouse import Button, Controller
 import db
 
 
-# original_kennungen_table_name = "OriginalKennungen"
-# verteilte_kennungen_table_name = "VerteilteKennungen"
-# login_seite = "https://moodle.frankfurt-university.de/login/index.php"
-# kurs_link = "https://campuas.frankfurt-university.de/course/view.php?id=4239"
-
-
 class MoodleBot:
     def __init__(self):
         # self.driver = webdriver.Chrome(ChromeDriverManager().install())
 
-        # set kurs link here
-        self.kurs_link = kurs_info.kurs_link
+        self.anmelde_bereich_link = kurs_info.anmelde_bereich_link
         self.login_seite = kurs_info.login_seite
         self.original_kennungen_table_name = kurs_info.original_kennungen_table_name
         self.verteilte_kennungen_table_name = kurs_info.verteilte_kennungen_table_name
@@ -49,7 +42,8 @@ class MoodleBot:
         print("CSV imported.")
 
     def start(self):
-        self.driver = webdriver.Firefox()
+        self.driver = webdriver.Safari()
+        # self.driver = webdriver.Firefox()
         self.mouse = Controller()
 
         # auf login navigieren
@@ -66,8 +60,11 @@ class MoodleBot:
         login = self.driver.find_element(by="id", value="username")
         login.send_keys(self.login)
 
+        print('password: ', self.password)
         password = self.driver.find_element(by="id", value="password")
         password.send_keys(self.password)
+
+        sleep(5)
 
         # login button
         self.driver.find_element(by="name", value="_eventId_proceed").click()
@@ -75,22 +72,9 @@ class MoodleBot:
 
         sleep(2)
 
-        # navigate to course
-        # self.driver.get(self.kurs_link)
-        # print("navigated to course")
-
-        # sleep(2)
-
-        # navigate to abgabe
-        # self.driver.find_element(
-        #     by="xpath",
-        #     value="/html/body/div[3]/div[4]/div[2]/div[3]/div/section/div/div/div/ul/li[1]/div[2]/ul/li[2]/div/div[1]/div/div[1]/div/div[2]/div[2]/a",
-        # ).click()
-        # print("navigated to abgabe")
-
         # navigate directly to abgabe
         self.driver.get(
-            "https://campuas.frankfurt-university.de/mod/assign/view.php?id=215998"
+            self.anmelde_bereich_link
         )
 
         # click Grade
