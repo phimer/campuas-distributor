@@ -5,8 +5,10 @@ import login_info
 import properties
 from termcolor import colored
 from time import sleep
-from pynput.mouse import Button, Controller
+# from pynput.mouse import Button, Controller
 import db
+from selenium.webdriver.common.by import By
+
 
 
 RUN_DISTRIBUTION_HEADLESS = True
@@ -49,7 +51,7 @@ class MoodleBot:
             options.add_argument("--headless")
         # self.driver = webdriver.Safari()
         self.driver = webdriver.Firefox(options=options)
-        self.mouse = Controller()
+        # self.mouse = Controller()
 
         # auf login navigieren
         self.driver.get(self.login_seite)
@@ -76,16 +78,52 @@ class MoodleBot:
 
         sleep(2)
 
+        # currently not used because navigating directly to grade all
         # navigate directly to abgabe
+        # self.driver.get(
+        #     self.anmelde_bereich_link
+        # )
+
+        # navigate directly to grade all
         self.driver.get(
-            self.anmelde_bereich_link
+            properties.GRADE_ALL_LINK
         )
 
-        # click Grade
+        sleep(2)
+        print('click on Grade on first student')
         self.driver.find_element(
-            by="xpath",
-            value="/html/body/div[2]/div[4]/div[2]/div[3]/div/section/div[2]/div[1]/div/div[2]/a",
+            by=By.XPATH,
+            value='/html/body/div[3]/div[4]/div[2]/div[3]/div/section/div[2]/div[3]/div[3]/table/tbody/tr[1]/td[6]/a'
         ).click()
+        print('clicked on Grade')          
+
+
+        # sleep(2)
+        # print('clicking on Edit button next to first student in list')
+        # self.driver.find_element(
+        #     by='id',
+        #     value='action-menu-toggle-1'
+        # ).click()
+        
+
+        # sleep(2)
+        # print('clicking on Grade button in popup')
+        # self.driver.find_element(
+        #     by='class name',
+        #     value='dropdown-item'
+        # ).click()
+
+
+
+        
+
+        # print('click on View all submissions')
+        # sleep(3)
+        # # click View all submissions
+        # self.driver.find_element(
+        #     by="xpath",
+        #     value="//button[text()='View all submissions']",
+        # ).click()
 
         print("sleep 10 before verteilung")
         sleep(10)
@@ -222,7 +260,7 @@ class MoodleBot:
             # self.mouse.position = (434, 434)
             # self.mouse.click(Button.left, 1)
 
-            sleep_time = 20
+            sleep_time = 5
             print(colored(f"{sleep_time} sec sleep", "white"))
             sleep(sleep_time)
 

@@ -5,7 +5,8 @@ VERTEILTE_KENNUNGEN_TABLE_NAME = "VerteilteKennungen"
 # KURS PROPERTIES
 LOGIN_SEITE = "https://campuas.frankfurt-university.de/"
 ANMELDE_BEREICH_LINK = "https://campuas.frankfurt-university.de/mod/assign/view.php?id=233516"
+GRADE_ALL_LINK = 'https://campuas.frankfurt-university.de/mod/assign/view.php?id=233516&action=grading'
 
 # APPLICATION PROPERTIES
-RUN_DISTRIBUTION_HEADLESS = False
+RUN_DISTRIBUTION_HEADLESS = True
 SCRIPT_LOOPS = 1000
