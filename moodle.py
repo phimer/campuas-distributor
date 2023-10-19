@@ -47,6 +47,7 @@ class MoodleBot:
 
     def start(self):
         options = webdriver.FirefoxOptions()
+        options.log.level = properties.WEB_DRIVER_LOG_LEVEL
         if properties.RUN_DISTRIBUTION_HEADLESS:
             options.add_argument("--headless")
         # self.driver = webdriver.Safari()
