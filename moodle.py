@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.chrome.options import Options
 
 #  from webdriver_manager.chrome import ChromeDriverManager
 import login_info
@@ -11,7 +13,16 @@ from selenium.webdriver.common.by import By
 
 
 
-RUN_DISTRIBUTION_HEADLESS = True
+
+if properties.ON_SERVER:
+    DRIVER_PATH = '/usr/local/bin/geckodriver'
+    s = Service(DRIVER_PATH)
+    WINDOW_SIZE = "1920,1080"
+
+    # Options
+    options = Options()
+    options.add_argument("--window-size=%s" % WINDOW_SIZE)
+    options.add_argument('--no-sandbox')
 
 class MoodleBot:
     def __init__(self):
@@ -46,12 +57,18 @@ class MoodleBot:
         print("CSV imported.")
 
     def start(self):
-        options = webdriver.FirefoxOptions()
         options.log.level = properties.WEB_DRIVER_LOG_LEVEL
+
+        # todo: clean this up
+
         if properties.RUN_DISTRIBUTION_HEADLESS:
             options.add_argument("--headless")
         # self.driver = webdriver.Safari()
-        self.driver = webdriver.Firefox(options=options)
+        
+        if properties.ON_SERVER:
+            self.driver = webdriver.Firefox(options=options, service=s)
+        else:
+            self.driver = webdriver.Firefox(options=options)
         # self.mouse = Controller()
 
         # auf login navigieren
