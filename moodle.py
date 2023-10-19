@@ -2,21 +2,23 @@ from selenium import webdriver
 
 #  from webdriver_manager.chrome import ChromeDriverManager
 import login_info
-import kurs_info
+import properties
 from termcolor import colored
 from time import sleep
 from pynput.mouse import Button, Controller
 import db
 
 
+RUN_DISTRIBUTION_HEADLESS = True
+
 class MoodleBot:
     def __init__(self):
         # self.driver = webdriver.Chrome(ChromeDriverManager().install())
 
-        self.anmelde_bereich_link = kurs_info.anmelde_bereich_link
-        self.login_seite = kurs_info.login_seite
-        self.original_kennungen_table_name = kurs_info.original_kennungen_table_name
-        self.verteilte_kennungen_table_name = kurs_info.verteilte_kennungen_table_name
+        self.anmelde_bereich_link = properties.ANMELDE_BEREICH_LINK
+        self.login_seite = properties.LOGIN_SEITE
+        self.original_kennungen_table_name = properties.ORIGINAL_KENNUNGEN_TABLE_NAME
+        self.verteilte_kennungen_table_name = properties.VERTEILTE_KENNUNGEN_TABLE_NAME
         self.login = login_info.login
         self.password = login_info.password
 
@@ -42,8 +44,11 @@ class MoodleBot:
         print("CSV imported.")
 
     def start(self):
-        self.driver = webdriver.Safari()
-        # self.driver = webdriver.Firefox()
+        options = webdriver.FirefoxOptions()
+        if properties.RUN_DISTRIBUTION_HEADLESS:
+            options.add_argument("--headless")
+        # self.driver = webdriver.Safari()
+        self.driver = webdriver.Firefox(options=options)
         self.mouse = Controller()
 
         # auf login navigieren
@@ -60,11 +65,10 @@ class MoodleBot:
         login = self.driver.find_element(by="id", value="username")
         login.send_keys(self.login)
 
-        print('password: ', self.password)
         password = self.driver.find_element(by="id", value="password")
         password.send_keys(self.password)
 
-        sleep(5)
+        sleep(3)
 
         # login button
         self.driver.find_element(by="name", value="_eventId_proceed").click()
@@ -89,11 +93,14 @@ class MoodleBot:
         ########### verteilung beginnt ################
         abgabe_check = False  # checkt ob Student eigene Abgabe gemacht hat
         i = 0
-        for i in range(100):
+        for i in range(properties.SCRIPT_LOOPS):
             # check jedes mal auf false setzen - wird benutzt um zu sehen ob student (RICHTIGE) abgabe gemacht hat - nur wenn wird weiter gemacht, sonst student übersprungen
             abgabe_check = False
 
             print(f"\n{i+1}")
+
+            print('get student info')
+            sleep(1)
 
             # get student info
             raw_student_info = self.driver.find_element(by="tag name", value="h4").text
@@ -126,7 +133,6 @@ class MoodleBot:
             else:
                 print(colored(f"{student_name} - {student_email}", "white"))
 
-                # student abgabe - hoffentlich matrikelnummer
                 try:
                     student_abgabe = self.driver.find_element(
                         by="class name", value="no-overflow"
@@ -184,6 +190,8 @@ class MoodleBot:
                     # text in feld eingeben
                     login_pw_string = result[1] + " - " + result[2]
 
+                    sleep(1)
+
                     self.driver.find_element(
                         by="xpath",
                         value='//*[@id="id_assignfeedbackcomments_editoreditable"]',
@@ -201,7 +209,7 @@ class MoodleBot:
                 else:
                     self.set_notify_student_box(False)
 
-            sleep(1)
+            sleep(2)
 
             # der nächste  Schritt muss bei jeder loop ausgeführt werden, da er zum nächsten studenten springt
             # click save and next
@@ -214,18 +222,20 @@ class MoodleBot:
             # self.mouse.position = (434, 434)
             # self.mouse.click(Button.left, 1)
 
-            sleep_time = 5
+            sleep_time = 20
             print(colored(f"{sleep_time} sec sleep", "white"))
             sleep(sleep_time)
 
             i = i + 1
 
         print(colored("ENDE", "red"))
+        self.driver.quit()
 
     def set_notify_student_box(self, check_box: bool):
         notify_student_checkbox = self.driver.find_element(
             by="xpath",
-            value="/html/body/div[5]/section/div/div[4]/div/div[2]/form/label/input",
+            value='/html/body/div[5]/section/div/div[3]/div/div[2]/form/label/input',
+            
         )
         if check_box:
             if not notify_student_checkbox.is_selected():
@@ -235,3 +245,6 @@ class MoodleBot:
             if notify_student_checkbox.is_selected():
                 print("Unselect Notify Student")
                 notify_student_checkbox.click()
+
+
+        print('clicked')
