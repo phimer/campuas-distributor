@@ -7,18 +7,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="description")
 
     # Add the --showentries argument. If provided, show_entries will be set to True.
-    parser.add_argument('--getalldata', action='store_true',
-                        help='Set get_all_data to True.')
+    parser.add_argument('--showalldata', action='store_true',
+                        help='Set show_all_data to True.')
     parser.add_argument('--skip', action='store_true',
                         help='Skipss all user input.')
 
     args = parser.parse_args()
 
-    get_all_data = args.getalldata
+    show_all_data = args.showalldata
     skip_all_user_input = args.skip
 
 # todo clean this up
-if get_all_data:
+if show_all_data:
     try:
         print('Original Kennungen:\n')
         print(db.get_all(properties.ORIGINAL_KENNUNGEN_TABLE_NAME))
