@@ -13,6 +13,11 @@ def get_first_entry(table):
     return login_password
 
 
+def get_all(table):
+    c.execute(f"""SELECT * from {table}""")
+    entries = c.fetchall()
+    return entries
+
 def delete(table, id):
     c.execute(f"""DELETE from {table} WHERE id=?""", [id])
 
