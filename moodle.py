@@ -17,6 +17,11 @@ from selenium.webdriver.common.by import By
 if properties.ON_SERVER:
     DRIVER_PATH = '/usr/local/bin/geckodriver'
     s = Service(DRIVER_PATH)
+# else:
+#     DRIVER_PATH = "geckodriver"
+#     s = Service(DRIVER_PATH)
+
+# print('DRIVER_PATH: ', DRIVER_PATH)
 
     
 
@@ -100,24 +105,31 @@ class MoodleBot:
 
         sleep(2)
 
-        # currently not used because navigating directly to grade all
+        
         # navigate directly to abgabe
-        # self.driver.get(
-        #     self.anmelde_bereich_link
-        # )
-
-        # navigate directly to grade all
         self.driver.get(
-            properties.GRADE_ALL_LINK
+            self.anmelde_bereich_link
         )
 
-        sleep(2)
-        print('click on Grade on first student')
         self.driver.find_element(
             by=By.XPATH,
-            value='/html/body/div[3]/div[4]/div[2]/div[3]/div/section/div[2]/div[3]/div[3]/table/tbody/tr[1]/td[6]/a'
+            value="/html/body/div[2]/div[4]/div[2]/div[3]/div/section/div[2]/div[1]/div/div[2]/a",
         ).click()
-        print('clicked on Grade')          
+
+
+        # following four blocks are currently not used, because they aren't usable in this way yey
+        # navigate directly to grade all
+        # self.driver.get(
+        #     properties.GRADE_ALL_LINK
+        # )
+
+        # sleep(2)
+        # print('click on Grade on first student')
+        # self.driver.find_element(
+        #     by=By.XPATH,
+        #     value='/html/body/div[3]/div[4]/div[2]/div[3]/div/section/div[2]/div[3]/div[3]/table/tbody/tr[1]/td[6]/a'
+        # ).click()
+        # print('clicked on Grade')          
 
 
         # sleep(2)
