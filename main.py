@@ -7,25 +7,29 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="description")
 
     # Add the --showentries argument. If provided, show_entries will be set to True.
-    parser.add_argument('--showalldata', action='store_true',
-                        help='Set show_all_data to True.')
-    parser.add_argument('--skip', action='store_true',
-                        help='Skipss all user input.')
+    parser.add_argument(
+        "--showalldata", action="store_true", help="Set show_all_data to True."
+    )
+    parser.add_argument("--skip", action="store_true", help="Skipss all user input.")
+    parser.add_argument(
+        "--headless", action="store_true", help="Start distribution headless."
+    )
 
     args = parser.parse_args()
 
     show_all_data = args.showalldata
     skip_all_user_input = args.skip
+    headless = args.headless
 
 # todo clean this up
 if show_all_data:
     try:
-        print('Original Kennungen:\n')
+        print("Original Kennungen:\n")
         print(db.get_all(properties.ORIGINAL_KENNUNGEN_TABLE_NAME))
-        print('Verteilte Kennungen:\n')
+        print("Verteilte Kennungen:\n")
         print(db.get_all(properties.VERTEILTE_KENNUNGEN_TABLE_NAME))
     except:
-        print('Could not get all data')
+        print("Could not get all data")
 
 bot = MoodleBot()
 
@@ -43,16 +47,12 @@ except:
     print("Table OriginalKennungen exists")
 
 
-
-
-
 if skip_all_user_input:
-    bot.start()
+    bot.start(headless=headless)
 else:
     user_input = input("Do you want to import a csv file into the database? (y/n)\n")
 
     if user_input == "y":
-
         file_path = input("Enter filepath for csv:\n")
 
         check, count = bot.check_if_data_already_in_table()
@@ -74,11 +74,10 @@ else:
         else:
             bot.save_csv_in_database(file_path)
 
-
     user_input = input("Do you want to start the bot? (y/n)\n")
 
     if user_input == "y":
-        bot.start()
+        bot.start(headless=headless)
     else:
         # exit
         pass

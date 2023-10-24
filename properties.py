@@ -11,6 +11,5 @@ GRADE_ALL_LINK = 'https://campuas.frankfurt-university.de/mod/assign/view.php?id
 # APPLICATION PROPERTIES
 RUN_DISTRIBUTION_HEADLESS = False
 WEB_DRIVER_LOG_LEVEL = "trace"
-SCRIPT_LOOPS = 1000
+SCRIPT_LOOPS = 1000000
 ON_SERVER = False
-RELOAD_AFTER = 200

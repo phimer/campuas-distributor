@@ -1,21 +1,21 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
-#from selenium.webdriver.firefox.options import Options
+
+# from selenium.webdriver.firefox.options import Options
 
 #  from webdriver_manager.chrome import ChromeDriverManager
 import login_info
 import properties
 from termcolor import colored
 from time import sleep
+
 # from pynput.mouse import Button, Controller
 import db
 from selenium.webdriver.common.by import By
 
 
-
-
 if properties.ON_SERVER:
-    DRIVER_PATH = '/usr/local/bin/geckodriver'
+    DRIVER_PATH = "/usr/local/bin/geckodriver"
     s = Service(DRIVER_PATH)
 # else:
 #     DRIVER_PATH = "geckodriver"
@@ -23,7 +23,6 @@ if properties.ON_SERVER:
 
 # print('DRIVER_PATH: ', DRIVER_PATH)
 
-    
 
 class MoodleBot:
     def __init__(self):
@@ -57,7 +56,7 @@ class MoodleBot:
 
         print("CSV imported.")
 
-    def start(self):
+    def start(self, headless: bool = False):
         # options.log.level = properties.WEB_DRIVER_LOG_LEVEL
 
         # todo: clean this up
@@ -67,13 +66,12 @@ class MoodleBot:
         WINDOW_SIZE = "1920,1080"
         options = webdriver.FirefoxOptions()
         options.add_argument("--window-size=%s" % WINDOW_SIZE)
-        options.add_argument('--no-sandbox')
+        options.add_argument("--no-sandbox")
 
-
-        if properties.RUN_DISTRIBUTION_HEADLESS:
+        if properties.RUN_DISTRIBUTION_HEADLESS or headless:
             options.add_argument("--headless")
         # self.driver = webdriver.Safari()
-        
+
         if properties.ON_SERVER:
             self.driver = webdriver.Firefox(options=options, service=s)
         else:
@@ -105,32 +103,27 @@ class MoodleBot:
 
         sleep(2)
 
-        
-        # navigate directly to abgabe
-        self.driver.get(
-            self.anmelde_bereich_link
-        )
-
-        self.driver.find_element(
-            by=By.XPATH,
-            value="/html/body/div[2]/div[4]/div[2]/div[3]/div/section/div[2]/div[1]/div/div[2]/a",
-        ).click()
-
-
-        # following four blocks are currently not used, because they aren't usable in this way yey
-        # navigate directly to grade all
+        # following two blocks are currently not used, because they aren't usable in this way yey
+        # # navigate directly to abgabe
         # self.driver.get(
-        #     properties.GRADE_ALL_LINK
+        #     self.anmelde_bereich_link
         # )
 
-        # sleep(2)
-        # print('click on Grade on first student')
         # self.driver.find_element(
         #     by=By.XPATH,
-        #     value='/html/body/div[3]/div[4]/div[2]/div[3]/div/section/div[2]/div[3]/div[3]/table/tbody/tr[1]/td[6]/a'
+        #     value="/html/body/div[2]/div[4]/div[2]/div[3]/div/section/div[2]/div[1]/div/div[2]/a",
         # ).click()
-        # print('clicked on Grade')          
 
+        # navigate directly to grade all
+        self.driver.get(properties.GRADE_ALL_LINK)
+
+        sleep(2)
+        print("click on Grade on first student")
+        self.driver.find_element(
+            by=By.XPATH,
+            value="/html/body/div[3]/div[4]/div[2]/div[3]/div/section/div[2]/div[3]/div[3]/table/tbody/tr[1]/td[6]/a",
+        ).click()
+        print("clicked on Grade")
 
         # sleep(2)
         # print('clicking on Edit button next to first student in list')
@@ -138,7 +131,6 @@ class MoodleBot:
         #     by='id',
         #     value='action-menu-toggle-1'
         # ).click()
-        
 
         # sleep(2)
         # print('clicking on Grade button in popup')
@@ -146,10 +138,6 @@ class MoodleBot:
         #     by='class name',
         #     value='dropdown-item'
         # ).click()
-
-
-
-        
 
         # print('click on View all submissions')
         # sleep(3)
@@ -171,7 +159,7 @@ class MoodleBot:
 
             print(f"\n{i+1}")
 
-            print('get student info')
+            print("get student info")
             sleep(1)
 
             # get student info
@@ -306,8 +294,7 @@ class MoodleBot:
     def set_notify_student_box(self, check_box: bool):
         notify_student_checkbox = self.driver.find_element(
             by="xpath",
-            value='/html/body/div[5]/section/div/div[3]/div/div[2]/form/label/input',
-            
+            value="/html/body/div[5]/section/div/div[3]/div/div[2]/form/label/input",
         )
         if check_box:
             if not notify_student_checkbox.is_selected():
@@ -318,5 +305,4 @@ class MoodleBot:
                 print("Unselect Notify Student")
                 notify_student_checkbox.click()
 
-
-        print('clicked')
+        print("clicked")
